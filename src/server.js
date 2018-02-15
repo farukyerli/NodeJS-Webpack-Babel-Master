@@ -1,10 +1,14 @@
-//import express from 'express';
-const express = require("express");
-const app = express();
+import express from 'express';
+import Routes from './routes';
+//const express = require("express");
+const app = express(); 
+
 
 
 app.get("/", (req, res) => {
-    res.send({ Mesage: "NodeJS Server is up and running ..." }); 
+    var time = Date.now();
+    console.warn(time);
+    res.send({ Mesage: "NodeJS Server is up and running ... Import" }); 
   });
 
 const PORT = process.env.PORT || 3000;
