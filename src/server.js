@@ -1,38 +1,41 @@
 import express from "express";
+import http from 'http';
+//import morgan from "morgan";
+import bodyParser from 'body-parser';
+import MiddleWares from './middlewares';
+import router from './router';
 import { logging as Log } from "./components/logging";
-//import db from './components/dbMongo';
-//import Routes from "./routes";
+const addLog = Log.addLog;
+
 const app = express();
 
-const addLog = Log.addLog;
+//app.use(morgan("combined"));
+// gelen requesti adam gibi bir sekle sokalim
+app.use(bodyParser.json({ type: "*/*" })); // middleware
 
 // static sayfalar icin ugrasmaya gerek yok.
 //Tek satir. abi hamalligi yapiyor.
 // css, jpeg, video gibi dalgalari buraya koyarsin. isteyen indirir.
 app.use("/", express.static("public"));
 
-// Bu bizim middleware. Middleware diye yazinca havali bir sey zannetme.
-// bu bildigin yirtik dondan cikan sey. her hackerin pembe dunyasi.
-// butun requestler buraya gelip Melahat ablanin merakini giderir.
+// derli toplu bir yerde dursunlar
+MiddleWares(app);
+router(app);
 
-app.use((req, res, next) => {
-  const now = new Date().toString();
-  addLog(">> Aha bir keklik daha geldi >>" + req.method + req.url);
-  addLog(now);
-  next();// aman dikkat. Melahat abla tamam demezse senin tarayici bekler de bekler.
+// Ula olmayan sayfayi nerenden buldun. 
+app.get("*", (req, res) => {
+  res.status(404).send("Sayfa YOK");
 });
 
-app.get("/", (req, res) => {
-  res.send({ Mesage: "NodeJS Server is up and running ..." });
+// Ula olmayan seyi ne gonderiyon. 
+app.post("*", (req, res) => {
+  res.status(404).send("Sayfa YOK");
 });
 
-app.get("/about", (req, res) => {
-  res.send("About Page");
-});
-
+const serverHTTP = http.createServer(app);
 const PORT = process.env.PORT || 3000;
 try {
-  app.listen(PORT, () => {
+  serverHTTP.listen(PORT, () => {
     addLog("Listening port ..." + PORT);
   });
 } catch (e) { 
