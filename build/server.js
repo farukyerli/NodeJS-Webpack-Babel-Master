@@ -74,25 +74,48 @@ var _express = __webpack_require__(1);
 
 var _express2 = _interopRequireDefault(_express);
 
-var _routes = __webpack_require__(2);
-
-var _routes2 = _interopRequireDefault(_routes);
+var _logging = __webpack_require__(4);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-//const express = require("express");
+//import db from './components/dbMongo';
+//import Routes from "./routes";
 var app = (0, _express2.default)();
 
+var addLog = _logging.logging.addLog;
+
+// static sayfalar icin ugrasmaya gerek yok.
+//Tek satir. abi hamalligi yapiyor.
+// css, jpeg, video gibi dalgalari buraya koyarsin. isteyen indirir.
+app.use("/", _express2.default.static("public"));
+
+// Bu bizim middleware. Middleware diye yazinca havali bir sey zannetme.
+// bu bildigin yirtik dondan cikan sey. her hackerin pembe dunyasi.
+// butun requestler buraya gelip Melahat ablanin merakini giderir.
+
+app.use(function (req, res, next) {
+  var now = new Date().toString();
+  addLog(">> Aha bir keklik daha geldi >>" + req.method + req.url);
+  addLog(now);
+  next(); // aman dikkat. Melahat abla tamam demezse senin tarayici bekler de bekler.
+});
+
 app.get("/", function (req, res) {
-    var time = Date.now();
-    console.warn(time);
-    res.send({ Mesage: "NodeJS Server is up and running ... Import" });
+  res.send({ Mesage: "NodeJS Server is up and running ..." });
+});
+
+app.get("/about", function (req, res) {
+  res.send("About Page");
 });
 
 var PORT = process.env.PORT || 3000;
-
-app.listen(PORT);
-console.log("Listening port ...", PORT);
+try {
+  app.listen(PORT, function () {
+    addLog("Listening port ..." + PORT);
+  });
+} catch (e) {
+  addLog("Error Listen : ", e);
+}
 
 /***/ }),
 /* 1 */
@@ -101,56 +124,57 @@ console.log("Listening port ...", PORT);
 module.exports = require("express");
 
 /***/ }),
-/* 2 */
+/* 2 */,
+/* 3 */,
+/* 4 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
 Object.defineProperty(exports, "__esModule", {
-    value: true
+  value: true
 });
+exports.logging = undefined;
 
-var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+var _fs = __webpack_require__(5);
 
-var _react = __webpack_require__(3);
-
-var _react2 = _interopRequireDefault(_react);
+var _fs2 = _interopRequireDefault(_fs);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+var logName = "server.log";
+var putConsole = "_logging_putConsole";
+var putDB = "_logging_putDB";
+var putDisc = "_logging_putDisc";
+var maxDebugLevel = 12;
+var debugLevel = 7; //addLog icinde Level gonderilirse bu sayiyi dikkate alarak isle
+var now = new Date().toString();
 
-function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
-
-function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
-
-var componentName = function (_Component) {
-    _inherits(componentName, _Component);
-
-    function componentName() {
-        _classCallCheck(this, componentName);
-
-        return _possibleConstructorReturn(this, (componentName.__proto__ || Object.getPrototypeOf(componentName)).apply(this, arguments));
+var logging = exports.logging = {
+  addLog: function addLog(text, level) {
+    if (level) {
+      if (level <= debugLevel) {
+        console.log("No log", debugLevel, maxDebugLevel);
+        return;
+      }
     }
+    console.log(text);
+    addLogtoDisc(text);
+  }
+};
 
-    _createClass(componentName, [{
-        key: 'render',
-        value: function render() {
-            return '';
-        }
-    }]);
-
-    return componentName;
-}(_react.Component);
-
-exports.default = componentName;
+var addLogtoDisc = function addLogtoDisc(text) {
+  _fs2.default.appendFile(logName, text + " \n", function (err) {
+    err ? console.log(">>> appendFile  ERROR >>>", err) : null;
+  });
+};
 
 /***/ }),
-/* 3 */
+/* 5 */
 /***/ (function(module, exports) {
 
-module.exports = require("react");
+module.exports = require("fs");
 
 /***/ })
 /******/ ]);

@@ -1,5 +1,6 @@
 module.exports = {
-    // Tell webpack to run babel on every file it runs through
+    // Babel'e asagidaki kurallar icinde dosyalari cevirmesini soyle, 
+    // oyle kafasina gore hareket edip adamin canini sikmasin.
     module: {
       rules: [
         {

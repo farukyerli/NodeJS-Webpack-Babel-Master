@@ -2,7 +2,7 @@
   "name": "node-server-master",
   "version": "1.0.0",
   "description": "Synchron-NodeJs-BoilerPlate",
-  "main": "./src/server.js",
+  "main": "src/server.js",
   "scripts": {
     "dev:server": "nodemon --watch build --exec \"node build/server.js\"",
     "dev:build-server": "webpack --config webpack.server.js --watch"
@@ -15,6 +15,10 @@
     "babel-preset-env": "^1.6.1",
     "babel-preset-stage-0": "^6.24.1",
     "express": "^4.16.2",
+    "fs": "0.0.1-security",
+    "hbs": "^4.0.1",
+    "mongodb": "^3.0.2",
+    "mongoose": "^5.0.6",
     "nodemon": "^1.14.12",
     "react": "^16.2.0",
     "react-dom": "^16.2.0",
